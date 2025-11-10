@@ -446,7 +446,7 @@ def visualize_attention_patterns(
     model: GreaterThanTransformer,
     inputs: torch.Tensor,
     layer_idx: int = 0,
-    figsize: Tuple[int, int] = (15, 4),
+    figsize: Optional[Tuple[int, int]] = None,
     device: str = 'cpu'
 ):
     """
@@ -471,7 +471,13 @@ def visualize_attention_patterns(
     # Get attention for specified layer
     layer_attention = attention_weights[layer_idx]  # List of attention per head
     n_heads = len(layer_attention)
-    n_examples = min(3, len(inputs))
+    n_examples = len(inputs)
+
+    # Dynamically adjust figure size based on number of examples
+    if figsize is None:
+        width = n_heads * 3.5  # ~3.5 inches per head
+        height = n_examples * 2.5  # ~2.5 inches per example
+        figsize = (width, height)
 
     fig, axes = plt.subplots(n_examples, n_heads, figsize=figsize)
     if n_examples == 1:
